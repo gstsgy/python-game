@@ -30,10 +30,14 @@
 #     l.append(0)
 # print(l)
 # print(havingScore)
+import pygame
 
 # l = [2,3]
 # z = [0,0]
 # #l.extend(z)
 # print(l[-1])
-l=[[False] * 20 for _ in range(10)]
-print(l)
+# l=[[False] * 20 for _ in range(10)]
+# print(l)
+pygame.font.init()
+f = pygame.font.Font('/home/guyue/pro/python/game/resouces/ChillKai.ttf',16)
+print("获取系统中所有可用字体", f)

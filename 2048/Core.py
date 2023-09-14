@@ -13,6 +13,7 @@ import random
 
 class Matrix:
     def __init__(self):
+        self.lineCount = 4
         self.numbers = [[0] * 4 for _ in range(4)]
         self.scores = 0
         self.havingScore = False
@@ -44,10 +45,10 @@ class Matrix:
                 l.reverse()
                 for n in range(4):
                     self.numbers[n][i] = l[n]
-        if not self.isEnd() and self.havingScore:
+        if self.havingScore:
             self.create(d)
 
-    def convert(self, l):
+    def convert(self, l, cs=True):
         # ---> 最下面的位置为第一个  0 0 2 0 -> 2 0 0 0
         # 去掉0
         notZero = []
@@ -67,7 +68,8 @@ class Matrix:
                 l[i] *= 2
                 l[i + 1] = 0
                 self.havingScore = True
-                self.scores += l[i]
+                if cs:
+                    self.scores += l[i]
 
         notZero = []
         zero = []
@@ -114,8 +116,21 @@ class Matrix:
             self.numbers[0][i] = n
 
     def isEnd(self):
-        for sub in self.numbers:
-            for n in sub:
-                if n == 0:
-                    return False
-        return True
+        self.havingScore = False
+        for i in range(4):
+            # 外层
+
+            l = list(self.numbers[i])
+            self.convert(l,cs = False)
+
+            l = list(self.numbers[i])
+            l.reverse()
+            self.convert(l,cs = False)
+
+            l = list([self.numbers[n][i] for n in range(4)])
+            self.convert(l,cs = False)
+
+            l = list([self.numbers[n][i] for n in range(4)])
+            l.reverse()
+            self.convert(l,cs = False)
+        return not self.havingScore

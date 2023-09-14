@@ -1,72 +1,123 @@
 import pygame
 from Core import Matrix, Direction
 
-keep_going = True
-LINE_COLOR = (255, 0, 0)  # 红色，使用RGB颜色
-LINE_WIDTH = 3
-LINE_HEIGHT = 100
-MARGE_LEFT = 5
-MARGE_TOP = 45
 
-# 初始设置
-pygame.init()  # 初始化pygame
-screen = pygame.display.set_mode(
-    (LINE_HEIGHT * 4 + MARGE_LEFT + LINE_WIDTH, LINE_HEIGHT * 4 + MARGE_TOP + LINE_WIDTH))  # Pygame窗口
+class Game2048:
+    # 定义常量
+    LINE_COLOR = (123, 123, 123)  # 线段颜色
+    LINE_WIDTH = 3  # 线段宽度
+    LINE_HEIGHT = 100  # 线段间距
+    MARGE_LEFT = 5  # 距离屏幕左边位置
+    MARGE_TOP = 45  # 距离屏幕上方位置
+    TITLE = "2048游戏----guyue"  # 标题
 
-pygame.display.set_caption("2048游戏----guyue")  # 标题
+    keep_going = True
 
-pygame.font.init()
-print("获取系统中所有可用字体", pygame.font.get_fonts())
-my_font = pygame.font.SysFont(['notosanstelugu', 'microsoftsansserif'], 50)
-matrix = Matrix()
-# 游戏循环
-while keep_going:
-    screen.fill([214, 231, 200])
-    textSurfaceObj = my_font.render(f"{matrix.scores}", True, [0, 0, 0], [214, 231, 200])
-    # get_rect()方法返回rect对象
-    textRectObj = textSurfaceObj.get_rect()
-    textRectObj.center = (
-        200, 25)
-    screen.blit(textSurfaceObj, textRectObj)
-    for event in pygame.event.get():  # 遍历事件
-        if event.type == pygame.QUIT:  # 退出事件
-            keep_going = False
-        elif event.type == pygame.KEYDOWN:
-            if event.unicode == 'w' or event.key == 1073741906 or event.unicode == '8':
-                matrix.transformation(Direction.UP)
-            elif event.unicode == 's' or event.key == 1073741905 or event.unicode == '2':
-                matrix.transformation(Direction.DOWN)
-            elif event.unicode == 'a' or event.key == 1073741904 or event.unicode == '4':
-                matrix.transformation(Direction.LEFT)
-            elif event.unicode == 'd' or event.key == 1073741903 or event.unicode == '6':
-                matrix.transformation(Direction.RIGHT)
-            # print("#", event.key, event.mod)
-            else:
-                pass
-                # matrix.create(matrix.numbers[0])
-            # print(event.unicode, event.key)
-            # print(matrix.numbers)
-    # 画横线
-    for line in range(5):
-        pygame.draw.line(screen, LINE_COLOR, (MARGE_LEFT + 0, MARGE_TOP + line * LINE_HEIGHT),
-                         (MARGE_LEFT + 400, MARGE_TOP + line * LINE_HEIGHT), LINE_WIDTH)
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode(
+            (Game2048.LINE_HEIGHT * 4 + Game2048.MARGE_LEFT + Game2048.LINE_WIDTH,
+             Game2048.LINE_HEIGHT * 4 + Game2048.MARGE_TOP + Game2048.LINE_WIDTH))  # Pygame窗口
+        pygame.display.set_caption(Game2048.TITLE)
+        self.fontInit()
+        self.matrix = Matrix()
+        self.isEnd = False
 
-    # 画竖线
-    for cloum in range(5):
-        pygame.draw.line(screen, LINE_COLOR, (MARGE_LEFT + cloum * LINE_HEIGHT, MARGE_TOP + 0),
-                         (MARGE_LEFT + cloum * LINE_HEIGHT, MARGE_TOP + 400), LINE_WIDTH)
-    # 写字
+    # 初始化字体
+    def fontInit(self):
+        pygame.font.init()
+        # print("获取系统中所有可用字体", pygame.font.get_fonts())
+        self.myFont = pygame.font.Font('/home/guyue/pro/python/game/resouces/ChillKai.ttf',45)
 
-    for (i, sub) in enumerate(matrix.numbers):
-        for (j, n) in enumerate(sub):
-            if n != 0:
-                textSurfaceObj = my_font.render(str(n), True, [0, 0, 0], [214, 231, 200])
-                # get_rect()方法返回rect对象
+    def start(self):
+        while Game2048.keep_going:
+            self.screen.fill([214, 231, 200])
+            if self.matrix.isEnd():
+                self.isEnd = True
+            for event in pygame.event.get():  # 遍历事件
+
+                if event.type == pygame.QUIT:  # 退出事件
+                    Game2048.keep_going = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.unicode == 'z' :
+                        self.isEnd = False
+                        self.matrix = Matrix()
+                    if event.unicode == 'w' or event.key == 1073741906 or event.unicode == '8':
+                        self.matrix.transformation(Direction.UP)
+                    elif event.unicode == 's' or event.key == 1073741905 or event.unicode == '2':
+                        self.matrix.transformation(Direction.DOWN)
+                    elif event.unicode == 'a' or event.key == 1073741904 or event.unicode == '4':
+                        self.matrix.transformation(Direction.LEFT)
+                    elif event.unicode == 'd' or event.key == 1073741903 or event.unicode == '6':
+                        self.matrix.transformation(Direction.RIGHT)
+                    # print("#", event.key, event.mod)
+
+
+                    # else:
+                    #     pass
+                    #     # matrix.create(matrix.numbers[0])
+                    # print(event.unicode, event.key)
+                    # print(matrix.numbers)
+            if self.isEnd:
+                # 写分数
+                textSurfaceObj = self.myFont.render(f"小伙子厉害呀，", True, [0, 0, 0], [214, 231, 200])
                 textRectObj = textSurfaceObj.get_rect()
-                textRectObj.center = (
-                    MARGE_LEFT + j * LINE_HEIGHT + LINE_HEIGHT / 2, MARGE_TOP + i * LINE_HEIGHT + LINE_HEIGHT / 2)
-                screen.blit(textSurfaceObj, textRectObj)
-    pygame.display.update()  # 刷新屏幕
+                textRectObj.center = (200, 25)
+                self.screen.blit(textSurfaceObj, textRectObj)
 
-# 退出程序
-pygame.quit()
+                textSurfaceObj = self.myFont.render(f"得了{self.matrix.scores}分", True, [0, 0, 0],
+                    [214, 231, 200])
+                textRectObj = textSurfaceObj.get_rect()
+                textRectObj.center = (200, 125)
+                self.screen.blit(textSurfaceObj, textRectObj)
+
+                textSurfaceObj = self.myFont.render(f"再接再厉吧", True, [0, 0, 0],
+                    [214, 231, 200])
+                textRectObj = textSurfaceObj.get_rect()
+                textRectObj.center = (200, 225)
+                self.screen.blit(textSurfaceObj, textRectObj)
+
+                textSurfaceObj = self.myFont.render(f"输入z键重新开始!", True, [0, 0, 0],
+                                                    [214, 231, 200])
+                textRectObj = textSurfaceObj.get_rect()
+                textRectObj.center = (200, 325)
+                self.screen.blit(textSurfaceObj, textRectObj)
+                pygame.display.update()  # 刷新屏幕
+                continue
+            # 写分数
+            textSurfaceObj = self.myFont.render(f"分数：{self.matrix.scores}", True, [0, 0, 0], [214, 231, 200])
+            textRectObj = textSurfaceObj.get_rect()
+            textRectObj.center = (200, 25)
+            self.screen.blit(textSurfaceObj, textRectObj)
+            # 画横线
+            for line in range(5):
+                pygame.draw.line(self.screen, self.LINE_COLOR,
+                                 (self.MARGE_LEFT + 0, self.MARGE_TOP + line * self.LINE_HEIGHT),
+                                 (self.MARGE_LEFT + 400, self.MARGE_TOP + line * self.LINE_HEIGHT), self.LINE_WIDTH)
+
+            # 画竖线
+            for cloum in range(5):
+                pygame.draw.line(self.screen, self.LINE_COLOR,
+                                 (self.MARGE_LEFT + cloum * self.LINE_HEIGHT, self.MARGE_TOP + 0),
+                                 (self.MARGE_LEFT + cloum * self.LINE_HEIGHT, self.MARGE_TOP + 400), self.LINE_WIDTH)
+            # 写字
+
+            for (i, sub) in enumerate(self.matrix.numbers):
+                for (j, n) in enumerate(sub):
+                    if n != 0:
+                        textSurfaceObj = self.myFont.render(str(n), True, [0, 0, 0], [214, 231, 200])
+                        # get_rect()方法返回rect对象
+                        textRectObj = textSurfaceObj.get_rect()
+                        textRectObj.center = (
+                            self.MARGE_LEFT + j * self.LINE_HEIGHT + self.LINE_HEIGHT / 2,
+                            self.MARGE_TOP + i * self.LINE_HEIGHT + self.LINE_HEIGHT / 2)
+                        self.screen.blit(textSurfaceObj, textRectObj)
+
+            pygame.display.update()  # 刷新屏幕
+        # 退出程序
+        pygame.quit()
+
+
+if __name__ == '__main__':
+    game = Game2048()
+    game.start()

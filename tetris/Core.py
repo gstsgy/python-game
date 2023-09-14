@@ -95,6 +95,7 @@ class TetrisMatrix(Matrix):
         random.shuffle(self.minos)
         self.shuffleMino()
 
+    # 再来一个新块
     def shuffleMino(self):
         self.activeMino = copy.deepcopy(self.minos[self.currentIndex])
         if self.currentIndex == len(self.minos) - 1:
@@ -103,8 +104,7 @@ class TetrisMatrix(Matrix):
         self.readyMino = copy.deepcopy(self.minos[self.currentIndex + 1])
         self.currentIndex += 1
 
-    pass
-
+    # 快速下降
     def down(self):
         if self.isColliding(x=0, y=1):
             self.archived()
@@ -113,27 +113,32 @@ class TetrisMatrix(Matrix):
             self.activeMino.relativeY += 1
             self.upgrade()
 
+    # 左移
     def left(self):
         if not self.isColliding(x=-1, y=0):
             self.activeMino.relativeX -= 1
             self.upgrade()
 
+    # 右移
     def right(self):
         if not self.isColliding(x=1, y=0):
             self.activeMino.relativeX += 1
             self.upgrade()
 
+    # 变换
     def up(self):
-        if not self.isColliding(x=0, y=0,isRotate=True):
+        if not self.isColliding(x=0, y=0, isRotate=True):
             self.activeMino.rotate()
             self.upgrade()
 
+    # 方块落底了 归档
     def archived(self):
         self.allMinos.append(self.activeMino)
         for b in self.activeMino.block:
             fb = self.activeMino.getFinalyBlock(b)
             self.matrix[fb[0]][fb[1]] = True
 
+    # 消行判断
     def upgrade(self):
         for row in range(len(self.matrix[0])):
             isGrade = True
