@@ -31,7 +31,9 @@
 # print(l)
 # print(havingScore)
 
-l = [2,3]
-z = [0,0]
-l.extend(z)
+# l = [2,3]
+# z = [0,0]
+# #l.extend(z)
+# print(l[-1])
+l=[[False] * 20 for _ in range(10)]
 print(l)
