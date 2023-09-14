@@ -8,6 +8,9 @@ class Matrix:
     def __init__(self):
         self.scores = 0
 
+    def isEnd(self):
+        pass
+
 
 class BaseBox:
     def __init__(self):
