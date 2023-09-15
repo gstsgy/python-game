@@ -121,16 +121,16 @@ class Matrix:
             # 外层
 
             l = list(self.numbers[i])
-            self.convert(l,cs = False)
+            self.convert(l, cs=False)
 
             l = list(self.numbers[i])
             l.reverse()
-            self.convert(l,cs = False)
+            self.convert(l, cs=False)
 
             l = list([self.numbers[n][i] for n in range(4)])
-            self.convert(l,cs = False)
+            self.convert(l, cs=False)
 
             l = list([self.numbers[n][i] for n in range(4)])
             l.reverse()
-            self.convert(l,cs = False)
+            self.convert(l, cs=False)
         return not self.havingScore

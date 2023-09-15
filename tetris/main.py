@@ -1,99 +1,120 @@
 import pygame
 
-from tetris.Core import TetrisMatrix, BaseBox
+from common.BaseGame import BaseGame
+from tetris.Core import TetrisMatrix
 
-keep_going = True
-LINE_COLOR = (215, 125, 25)  # 红色，使用RGB颜色
-LINE_WIDTH = 3
-LINE_HEIGHT = 50
-MARGE_LEFT = 5
-MARGE_TOP = 0
 
-###-----------------------------------
-matrix = TetrisMatrix()
+class TetrisGame(BaseGame):
+    LINE_COLOR = (215, 125, 25)  # 红色，使用RGB颜色
+    LINE_WIDTH = 3
+    LINE_HEIGHT = 50
+    MARGE_LEFT = 5
+    MARGE_TOP = 0
+    MAX_X = 9
+    MAX_Y = 15
+    def __init__(self):
+        super().__init__(TetrisGame.LINE_HEIGHT * (TetrisGame.MAX_X+1) + TetrisGame.MARGE_LEFT + TetrisGame.LINE_WIDTH+200,
+                         TetrisGame.LINE_HEIGHT * (TetrisGame.MAX_Y+1) + TetrisGame.MARGE_TOP + TetrisGame.LINE_WIDTH,
+                         "俄罗斯方块----guyue")
+        self.myFont = None
+        self.myEvent = None
+        self.matrix = TetrisMatrix(TetrisGame.MAX_X,TetrisGame.MAX_Y)
 
-###-----------------------------------
-# 初始设置
-pygame.init()  # 初始化pygame
-screen = pygame.display.set_mode(
-    (LINE_HEIGHT * 10 + MARGE_LEFT + LINE_WIDTH, LINE_HEIGHT * 20 + MARGE_TOP + LINE_WIDTH))  # Pygame窗口
+    def startBefore(self):
+        pygame.font.init()
+        print("获取系统中所有可用字体", pygame.font.get_fonts())
+        self.myFont = pygame.font.Font('/home/guyue/pro/python/game/resouces/ChillKai.ttf', 45)
+        # 设置 自定义事件
+        self.myEvent = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.myEvent, 1000)  #
+        clock = pygame.time.Clock()
 
-pygame.display.set_caption("俄罗斯方块----guyue")  # 标题
-
-pygame.font.init()
-print("获取系统中所有可用字体", pygame.font.get_fonts())
-my_font = pygame.font.SysFont(['notosanstelugu', 'microsoftsansserif'], 50)
-
-#定时
-# 自定义事件
-MYEVENT01 = pygame.USEREVENT + 1
-pygame.time.set_timer(MYEVENT01, 1000)  #
-clock = pygame.time.Clock()
-
-# 游戏循环
-while keep_going:
-    screen.fill([214, 231, 200])
-    # textSurfaceObj = my_font.render(f"{matrix.scores}", True, [0, 0, 0], [214, 231, 200])
-    # # get_rect()方法返回rect对象
-    # textRectObj = textSurfaceObj.get_rect()
-    # textRectObj.center = (
-    #     200, 25)
-    # screen.blit(textSurfaceObj, textRectObj)
-    for event in pygame.event.get():  # 遍历事件
-        if event.type == pygame.QUIT:  # 退出事件
-            keep_going = False
-        elif event.type == MYEVENT01:
-            matrix.down()
+    def eventListeners(self, event):
+        if event.type == self.myEvent:
+            self.matrix.down()
         elif event.type == pygame.KEYDOWN:
             if event.unicode == 'w' or event.key == 1073741906 or event.unicode == '8':
-                matrix.up()
+                self.matrix.up()
             elif event.unicode == 's' or event.key == 1073741905 or event.unicode == '2':
-                matrix.down()
+                self.matrix.down()
             elif event.unicode == 'a' or event.key == 1073741904 or event.unicode == '4':
-                matrix.left()
+                self.matrix.left()
             elif event.unicode == 'd' or event.key == 1073741903 or event.unicode == '6':
-                matrix.right()
-                print("#", event.key, event.mod)
-            else:
-                pass
-                # matrix.create(matrix.numbers[0])
-            # print(event.unicode, event.key)
-            # print(matrix.numbers)
-    # 画横线
-    for line in range(21):
-        pygame.draw.line(screen, LINE_COLOR, (MARGE_LEFT + 0, MARGE_TOP + line * LINE_HEIGHT),
-                         (MARGE_LEFT + 500, MARGE_TOP + line * LINE_HEIGHT), LINE_WIDTH)
+                self.matrix.right()
+            elif event.unicode == 'z' and self.matrix.end:
+                self.matrix =  TetrisMatrix(TetrisGame.MAX_X,TetrisGame.MAX_Y)
 
-    # 画竖线
-    for cloum in range(11):
-        pygame.draw.line(screen, LINE_COLOR, (MARGE_LEFT + cloum * LINE_HEIGHT, MARGE_TOP + 0),
-                         (MARGE_LEFT + cloum * LINE_HEIGHT, MARGE_TOP + 1000), LINE_WIDTH)
+    def rending(self):
 
-    # 画箱子
-    for b in matrix.activeMino.block:
-        pygame.draw.rect(screen,matrix.activeMino.color,[matrix.activeMino.getFinalyBlock(b)[0]*LINE_HEIGHT+MARGE_LEFT+5,
-                                                         matrix.activeMino.getFinalyBlock(b)[1]*LINE_HEIGHT+MARGE_TOP+5,40,40],0)
+        # 画横线
+        for line in range(self.matrix.maxY+2):
+            pygame.draw.line(self.screen, self.LINE_COLOR, (self.MARGE_LEFT + 0, self.MARGE_TOP + line * self.LINE_HEIGHT),
+                             (self.MARGE_LEFT + (self.LINE_HEIGHT*(self.MAX_X+1)), self.MARGE_TOP + line * self.LINE_HEIGHT), self.LINE_WIDTH)
 
-    # 画所有箱子
-    # 画箱子
-    for m in matrix.allMinos:
+        # 画竖线
+        for cloum in range(self.matrix.maxX+2):
+            pygame.draw.line(self.screen, self.LINE_COLOR, (self.MARGE_LEFT + cloum * self.LINE_HEIGHT, self.MARGE_TOP + 0),
+                             (self.MARGE_LEFT + cloum * self.LINE_HEIGHT, self.MARGE_TOP + (self.LINE_HEIGHT*(self.MAX_Y+1))), self.LINE_WIDTH)
 
-        for b in m.block:
-            pygame.draw.rect(screen, m.color,
-                             [m.getFinalyBlock(b)[0] * LINE_HEIGHT + MARGE_LEFT + 5,
-                              m.getFinalyBlock(b)[1] * LINE_HEIGHT + MARGE_TOP + 5, 40, 40], 0)
-    # 写字
+        # 画箱子
+        for b in self.matrix.activeMino.block:
+            pygame.draw.rect(self.screen, self.matrix.activeMino.color,
+                             [self.matrix.activeMino.getFinalyBlock(b)[0] * self.LINE_HEIGHT + self.MARGE_LEFT + 5,
+                              self.matrix.activeMino.getFinalyBlock(b)[1] * self.LINE_HEIGHT + self.MARGE_TOP + 5, 40, 40], 0)
 
-    # for (i, sub) in enumerate(matrix.numbers):
-    #     for (j, n) in enumerate(sub):
-    #         if n != 0:
-    #             textSurfaceObj = my_font.render(str(n), True, [0, 0, 0], [214, 231, 200])
-    #             # get_rect()方法返回rect对象
-    #             textRectObj = textSurfaceObj.get_rect()
-    #             textRectObj.center = (
-    #                 MARGE_LEFT + j * LINE_HEIGHT + LINE_HEIGHT / 2, MARGE_TOP + i * LINE_HEIGHT + LINE_HEIGHT / 2)
-    #             screen.blit(textSurfaceObj, textRectObj)
-    pygame.display.update()  # 刷新屏幕
+        # 画所有箱子
+        # 画箱子
+        for m in self.matrix.allMinos:
 
-# 退出程序
-pygame.quit()
+            for b in m.block:
+                pygame.draw.rect(self.screen, m.color,
+                                 [m.getFinalyBlock(b)[0] * self.LINE_HEIGHT + self.MARGE_LEFT + 5,
+                                  m.getFinalyBlock(b)[1] * self.LINE_HEIGHT + self.MARGE_TOP + 5, 40, 40], 0)
+
+    def rendingBefore(self):
+        self.screen.fill([214, 231, 200])
+
+        if self.matrix.isEnd():
+            # 画分数面板
+            # 写分数
+            textSurfaceObj = self.myFont.render(f"分数：{self.matrix.scores}", True, [0, 0, 0], [214, 231, 200])
+            textRectObj = textSurfaceObj.get_rect()
+            textRectObj.center = (self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 100, 25)
+            self.screen.blit(textSurfaceObj, textRectObj)
+
+            # 下一个方块
+            textSurfaceObj = self.myFont.render(f"GAME OVER!", True, [0, 0, 0], [214, 231, 200])
+            textRectObj = textSurfaceObj.get_rect()
+            textRectObj.center = (self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 100, 125)
+            self.screen.blit(textSurfaceObj, textRectObj)
+
+            textSurfaceObj = self.myFont.render(f"z键重开!", True, [0, 0, 0], [214, 231, 200])
+            textRectObj = textSurfaceObj.get_rect()
+            textRectObj.center = (self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 100, 225)
+            self.screen.blit(textSurfaceObj, textRectObj)
+        else:
+            # 画分数面板
+            # 写分数
+            textSurfaceObj = self.myFont.render(f"分数：{self.matrix.scores}", True, [0, 0, 0], [214, 231, 200])
+            textRectObj = textSurfaceObj.get_rect()
+            textRectObj.center = (self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 100, 25)
+            self.screen.blit(textSurfaceObj, textRectObj)
+
+            # 下一个方块
+            textSurfaceObj = self.myFont.render(f"下一个", True, [0, 0, 0], [214, 231, 200])
+            textRectObj = textSurfaceObj.get_rect()
+            textRectObj.center = (self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 100, 125)
+            self.screen.blit(textSurfaceObj, textRectObj)
+
+            relativeX = self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 80
+            relativeY = 225
+            # 画箱子
+            for b in self.matrix.readyMino.block:
+                pygame.draw.rect(self.screen, self.matrix.readyMino.color,
+                                 [b[0] * 30 + 2 + relativeX,
+                                  b[1] * 30 + 2 + relativeY, 25, 25], 0)
+
+
+if __name__ == '__main__':
+    game = TetrisGame()
+    game.start()

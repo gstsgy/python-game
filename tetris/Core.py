@@ -15,7 +15,7 @@ class Matrix:
 class BaseBox:
     def __init__(self):
         self.initX = 4
-        self.initY = 2
+        self.initY = 1
         self.O = Mino(self.initX, self.initY)
         self.O.block.append([0, 0])
         self.O.block.append([1, 0])
@@ -79,20 +79,22 @@ class BaseBox:
 
 class TetrisMatrix(Matrix):
 
-    def __init__(self):
+    def __init__(self, maxX, maxY):
         super().__init__()
         self._bm = BaseBox()
         self.minos = self._bm.getGroup()
         self.readyMino = None
         self.activeMino = None
         self.currentIndex = 0
-        self.start()
+
         self.minX = 0
         self.minY = 0
-        self.maxX = 9
-        self.maxY = 19
-        self.matrix = [[False] * 20 for _ in range(10)]
+        self.maxX = maxX
+        self.maxY = maxY
+        self.matrix = [[False] * (self.maxY + 1) for _ in range(self.maxX + 1)]
         self.allMinos = []
+        self.end = False
+        self.start()
 
     def start(self):
         random.shuffle(self.minos)
@@ -100,6 +102,8 @@ class TetrisMatrix(Matrix):
 
     # 再来一个新块
     def shuffleMino(self):
+        # // 判断是否结束
+
         self.activeMino = copy.deepcopy(self.minos[self.currentIndex])
         if self.currentIndex == len(self.minos) - 1:
             self.currentIndex = -1
@@ -107,9 +111,14 @@ class TetrisMatrix(Matrix):
         self.readyMino = copy.deepcopy(self.minos[self.currentIndex + 1])
         self.currentIndex += 1
 
+        if self.isColliding():
+            self.end = True
+
     # 快速下降
     def down(self):
         if self.isColliding(x=0, y=1):
+            if self.end:
+                return
             self.archived()
             self.shuffleMino()
         else:
@@ -118,18 +127,24 @@ class TetrisMatrix(Matrix):
 
     # 左移
     def left(self):
+        if self.end:
+            return
         if not self.isColliding(x=-1, y=0):
             self.activeMino.relativeX -= 1
             self.upgrade()
 
     # 右移
     def right(self):
+        if self.end:
+            return
         if not self.isColliding(x=1, y=0):
             self.activeMino.relativeX += 1
             self.upgrade()
 
     # 变换
     def up(self):
+        if self.end:
+            return
         if not self.isColliding(x=0, y=0, isRotate=True):
             self.activeMino.rotate()
             self.upgrade()
@@ -166,7 +181,7 @@ class TetrisMatrix(Matrix):
                     for b in m.block:
                         if m.getFinalyBlock(b)[1] < row:
                             b[1] += 1
-                self.matrix = [[False] * 20 for _ in range(10)]
+                self.matrix = [[False] * (self.maxY + 1) for _ in range(self.maxX + 1)]
                 for m in self.allMinos:
                     for b in m.block:
                         fb = m.getFinalyBlock(b)
@@ -184,3 +199,6 @@ class TetrisMatrix(Matrix):
             if self.matrix[fb[0] + x][fb[1] + y]:
                 return True
         return False
+
+    def isEnd(self):
+        return self.end
