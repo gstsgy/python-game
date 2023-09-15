@@ -23,7 +23,7 @@ class TetrisGame(BaseGame):
     def startBefore(self):
         pygame.font.init()
         print("获取系统中所有可用字体", pygame.font.get_fonts())
-        self.myFont = pygame.font.Font('/home/guyue/pro/python/game/resouces/ChillKai.ttf', 45)
+        self.myFont = pygame.font.Font('../resouces/ChillKai.ttf', 45)
         # 设置 自定义事件
         self.myEvent = pygame.USEREVENT + 1
         pygame.time.set_timer(self.myEvent, 1000)  #

@@ -25,7 +25,7 @@ class Game2048(BaseGame.BaseGame):
     def fontInit(self):
         pygame.font.init()
         # print("获取系统中所有可用字体", pygame.font.get_fonts())
-        self.myFont = pygame.font.Font('/home/guyue/pro/python/game/resouces/ChillKai.ttf', 45)
+        self.myFont = pygame.font.Font('../resouces/ChillKai.ttf', 45)
 
     def eventListenBefore(self):
         self.screen.fill([214, 231, 200])
