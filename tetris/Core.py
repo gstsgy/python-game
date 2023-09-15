@@ -158,13 +158,14 @@ class TetrisMatrix(Matrix):
 
     # 消行判断
     def upgrade(self):
+        scoreEach = 0
         for row in range(len(self.matrix[0])):
             isGrade = True
             for i in range(len(self.matrix)):
                 if not self.matrix[i][row]:
                     isGrade = False
             if isGrade:
-                self.scores += 1
+                scoreEach += 1
                 tmpMinos = []
                 # 消行
                 for m in self.allMinos:
@@ -186,6 +187,8 @@ class TetrisMatrix(Matrix):
                     for b in m.block:
                         fb = m.getFinalyBlock(b)
                         self.matrix[fb[0]][fb[1]] = True
+
+        self.scores += (scoreEach * (2 ** (scoreEach - 1)))
 
     # 碰撞检测
     def isColliding(self, x=0, y=0, isRotate=False):

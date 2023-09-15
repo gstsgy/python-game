@@ -39,5 +39,7 @@ import pygame
 # l=[[False] * 20 for _ in range(10)]
 # print(l)
 pygame.font.init()
-f = pygame.font.Font('/home/guyue/pro/python/game/resouces/ChillKai.ttf',16)
+f = pygame.font.Font('/home/guyue/pro/python/game/resouces/ChillKai.ttf', 16)
 print("获取系统中所有可用字体", f)
+
+# pyinstaller  -F -w main.py
