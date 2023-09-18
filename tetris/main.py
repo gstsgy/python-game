@@ -19,6 +19,7 @@ class TetrisGame(BaseGame):
         self.myFont = None
         self.myEvent = None
         self.matrix = TetrisMatrix(TetrisGame.MAX_X,TetrisGame.MAX_Y)
+        self.isStart = False
 
     def startBefore(self):
         pygame.font.init()
@@ -30,7 +31,7 @@ class TetrisGame(BaseGame):
         clock = pygame.time.Clock()
 
     def eventListeners(self, event):
-        if event.type == self.myEvent:
+        if event.type == self.myEvent and self.isStart:
             self.matrix.down()
         elif event.type == pygame.KEYDOWN:
             if event.unicode == 'w' or event.key == 1073741906 or event.unicode == '8':
@@ -43,6 +44,8 @@ class TetrisGame(BaseGame):
                 self.matrix.right()
             elif event.unicode == 'z' and self.matrix.end:
                 self.matrix =  TetrisMatrix(TetrisGame.MAX_X,TetrisGame.MAX_Y)
+            elif event.key == pygame.K_SPACE:
+                self.isStart = not self.isStart
 
     def rending(self):
 
@@ -73,47 +76,51 @@ class TetrisGame(BaseGame):
 
     def rendingBefore(self):
         self.screen.fill([214, 231, 200])
-
+        relativeX = self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 100
         if self.matrix.isEnd():
             # 画分数面板
             # 写分数
             textSurfaceObj = self.myFont.render(f"分数：{self.matrix.scores}", True, [0, 0, 0], [214, 231, 200])
             textRectObj = textSurfaceObj.get_rect()
-            textRectObj.center = (self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 100, 25)
+            textRectObj.center = (relativeX, 25)
             self.screen.blit(textSurfaceObj, textRectObj)
 
             # 下一个方块
             textSurfaceObj = self.myFont.render(f"GAME OVER!", True, [0, 0, 0], [214, 231, 200])
             textRectObj = textSurfaceObj.get_rect()
-            textRectObj.center = (self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 100, 125)
+            textRectObj.center = (relativeX, 125)
             self.screen.blit(textSurfaceObj, textRectObj)
 
             textSurfaceObj = self.myFont.render(f"z键重开!", True, [0, 0, 0], [214, 231, 200])
             textRectObj = textSurfaceObj.get_rect()
-            textRectObj.center = (self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 100, 225)
+            textRectObj.center = (relativeX, 225)
             self.screen.blit(textSurfaceObj, textRectObj)
         else:
             # 画分数面板
             # 写分数
             textSurfaceObj = self.myFont.render(f"分数：{self.matrix.scores}", True, [0, 0, 0], [214, 231, 200])
             textRectObj = textSurfaceObj.get_rect()
-            textRectObj.center = (self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 100, 25)
+            textRectObj.center = (relativeX, 25)
             self.screen.blit(textSurfaceObj, textRectObj)
 
             # 下一个方块
             textSurfaceObj = self.myFont.render(f"下一个", True, [0, 0, 0], [214, 231, 200])
             textRectObj = textSurfaceObj.get_rect()
-            textRectObj.center = (self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 100, 125)
+            textRectObj.center = (relativeX, 125)
             self.screen.blit(textSurfaceObj, textRectObj)
 
-            relativeX = self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 80
             relativeY = 225
             # 画箱子
             for b in self.matrix.readyMino.block:
                 pygame.draw.rect(self.screen, self.matrix.readyMino.color,
-                                 [b[0] * 30 + 2 + relativeX,
+                                 [b[0] * 30 + 2 + relativeX-20,
                                   b[1] * 30 + 2 + relativeY, 25, 25], 0)
 
+        # 空格暂停/开始
+        textSurfaceObj = self.myFont.render(f"空格:{'开始'if not self.isStart else '暂停'}", True, [0, 0, 0], [214, 231, 200])
+        textRectObj = textSurfaceObj.get_rect()
+        textRectObj.center = (relativeX, 325)
+        self.screen.blit(textSurfaceObj, textRectObj)
 
 if __name__ == '__main__':
     game = TetrisGame()
