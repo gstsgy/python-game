@@ -15,7 +15,7 @@ class PlaneGame(BaseGame):
     BULLET_PATH = './img/zd.png'
     BD_PATH = './img/planbg.png'
     def __init__(self):
-        super().__init__(PlaneGame.WIDTH, PlaneGame.HEIGHT, "贪吃蛇----guyue")
+        super().__init__(PlaneGame.WIDTH, PlaneGame.HEIGHT, "飞机大战----guyue")
         self.myFont = None
         self.myEvent = None
         self.isStart = False
@@ -25,17 +25,23 @@ class PlaneGame(BaseGame):
         pygame.key.set_repeat(10, 15)
         pygame.font.init()
         print("获取系统中所有可用字体", pygame.font.get_fonts())
-        self.myFont = pygame.font.Font('../resouces/ChillKai.ttf', 45)
+        self.myFont = pygame.font.Font('../resouces/ChillKai.ttf', 16)
         # 设置 自定义事件
-        self.myEvent = pygame.USEREVENT + 1
-        pygame.time.set_timer(self.myEvent, 500)  #
+        self.bulletSpeed = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.bulletSpeed, 100)  #
+        pygame.time.Clock()
+
+        # 设置 自定义事件
+        self.planeFall = pygame.USEREVENT + 2
+        pygame.time.set_timer(self.planeFall, 1000)  #
         pygame.time.Clock()
 
     def eventListeners(self, event):
         pass
-        if event.type == self.myEvent and self.isStart:
-            pass
-            #self.matrix.forward()
+        if event.type == self.bulletSpeed and self.isStart:
+            self.matrix.shoot()
+        if event.type == self.planeFall and self.isStart:
+            self.matrix.planeFall()
         elif event.type == pygame.KEYDOWN:
             if event.unicode == 'w' or event.key == 1073741906 or event.unicode == '8':
                 self.matrix.up()
@@ -48,19 +54,47 @@ class PlaneGame(BaseGame):
             # elif event.unicode == 'z' and self.matrix.end:
             #     self.matrix = SnakeMatrix(SnakeGame.BOX_MAX_X, SnakeGame.BOX_MAX_Y)
             elif event.key == pygame.K_SPACE:
-                self.isStart = not self.isStart
+                self.isStart = True
 
     def rending(self):
         bg_img = pygame.image.load(PlaneGame.PLANE_PATH).convert_alpha()  # 战机
-
+        bullet_img = pygame.image.load(PlaneGame.BULLET_PATH).convert_alpha()
+        enemy_img = pygame.image.load(PlaneGame.ENEMY_PATH).convert_alpha()
         self.screen.blit(bg_img, (self.matrix.plane.x, self.matrix.plane.y))  # 绘制战机
+        for b in self.matrix.bullets:
+            self.screen.blit(bullet_img, (b.x, b.y))  # 绘制子弹
+
+        for e in self.matrix.enemys:
+            self.screen.blit(enemy_img, (e.x, e.y))  # 绘制敌机
 
 
     def rendingBefore(self):
         self.screen.fill([0xf3, 0xf4, 0xf5])
         bg_img = pygame.image.load(PlaneGame.BD_PATH).convert()  # 背景图片
         self.screen.blit(bg_img, (0, 0))  # 绘制背景
+        # 空格暂停/开始
+        textSurfaceObj = self.myFont.render(f"按空格开始", True, [0, 0, 0],
+                                            [214, 231, 200])
+        textRectObj = textSurfaceObj.get_rect()
+        textRectObj.center = (40, 710)
+        self.screen.blit(textSurfaceObj, textRectObj)
 
+        # 分数
+        textSurfaceObj = self.myFont.render(f"分数:{self.matrix.scores}", True, [0, 0, 0],
+                                            [214, 231, 200])
+        textRectObj = textSurfaceObj.get_rect()
+        textRectObj.center = (25, 730)
+        self.screen.blit(textSurfaceObj, textRectObj)
+
+        # 血量
+        textSurfaceObj = self.myFont.render(f"血量:", True, [0, 0, 0],
+                                            [214, 231, 200])
+        textRectObj = textSurfaceObj.get_rect()
+        textRectObj.center = (20, 750)
+        self.screen.blit(textSurfaceObj, textRectObj)
+        pygame.draw.rect(self.screen, [125,125,125],[45,740, 400, 20], 0)
+        hp = self.matrix.plane.hp / 20 * 355 +45
+        pygame.draw.rect(self.screen, [255, 121, 121], [45, 740, hp, 20], 0)
 
 if __name__ == '__main__':
     game = PlaneGame()
