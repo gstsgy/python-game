@@ -2,9 +2,6 @@ import pygame
 
 from common.BaseGame import BaseGame
 from snake.Core import SnakeMatrix
-from tetris.Core import TetrisMatrix
-
-
 class SnakeGame(BaseGame):
     LINE_COLOR = (104, 188, 103)  # 红色，使用RGB颜色
     LINE_WIDTH = 1
