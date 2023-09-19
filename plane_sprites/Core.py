@@ -88,11 +88,6 @@ class PlaneMatrix:
             if e.y < self.maxY:
                 tmp.append(e)
         self.enemys = tmp
-
-        # 生成敌机
-        # isshow = random.choice([0, 1, 2, 3])
-        # if isshow != 0:
-        #     return
         posiX = random.randint(25, self.maxY - 30)
         enemy = Plane()
         enemy.x = posiX
@@ -101,6 +96,16 @@ class PlaneMatrix:
         enemy.max_height = 30
         enemy.max_width = 45
         self.enemys.append(enemy)
+        tmp = []
+        for e in self.enemys:
+            if abs(self.plane.x - (e.x + 25)) < self.plane.max_width / 2 + e.max_width / 2 and abs(
+                    self.plane.y - e.y) < self.plane.max_height / 2 + e.max_height / 2:
+                self.plane.hp -= e.hp
+            else:
+                tmp.append(e)
+        self.enemys = tmp
+        if self.plane.hp<=0:
+            self.end = True
 
     def __wrecked(self):
         tmpBullets = []
@@ -111,7 +116,7 @@ class PlaneMatrix:
             for e in self.enemys:
                 # 判断子弹有没有打到敌机
 
-                if abs(b.x-(e.x+25)) <2/2+ e.max_width/2 and abs(b.y-e.y) <6/2+ e.max_height/2:
+                if abs(b.x - (e.x + 25)) < 2 / 2 + e.max_width / 2 and abs(b.y - e.y) < 6 / 2 + e.max_height / 2:
                     e.hp -= 1
                     self.scores += 1
                     isHit = True
