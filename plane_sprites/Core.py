@@ -3,7 +3,7 @@ import random
 
 class Bullet:
 
-    def __init__(self, x, y, speed=4):
+    def __init__(self, x, y, speed=10):
         self.x = x
         self.y = y
         self.speed = speed
