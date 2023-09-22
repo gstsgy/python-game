@@ -24,7 +24,7 @@ class TetrisGame(BaseGame):
     def startBefore(self):
         pygame.font.init()
         print("获取系统中所有可用字体", pygame.font.get_fonts())
-        self.myFont = pygame.font.Font('../resouces/ChillKai.ttf', 45)
+        self.myFont = pygame.font.Font('../resouces/ChillKai.ttf', 15)
         # 设置 自定义事件
         self.myEvent = pygame.USEREVENT + 1
         pygame.time.set_timer(self.myEvent, 1000)  #
@@ -76,51 +76,56 @@ class TetrisGame(BaseGame):
 
     def rendingBefore(self):
         self.screen.fill([214, 231, 200])
-        relativeX = self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1)) + 100
+        relativeX = self.MARGE_LEFT + (self.LINE_HEIGHT * (self.MAX_X + 1))+20
         if self.matrix.isEnd():
             # 画分数面板
             # 写分数
             textSurfaceObj = self.myFont.render(f"分数：{self.matrix.scores}", True, [0, 0, 0], [214, 231, 200])
-            textRectObj = textSurfaceObj.get_rect()
-            textRectObj.center = (relativeX, 25)
-            self.screen.blit(textSurfaceObj, textRectObj)
+
+            self.screen.blit(textSurfaceObj, (relativeX, 35))
 
             # 下一个方块
             textSurfaceObj = self.myFont.render(f"GAME OVER!", True, [0, 0, 0], [214, 231, 200])
-            textRectObj = textSurfaceObj.get_rect()
-            textRectObj.center = (relativeX, 125)
-            self.screen.blit(textSurfaceObj, textRectObj)
+
+            self.screen.blit(textSurfaceObj, (relativeX, 60))
 
             textSurfaceObj = self.myFont.render(f"z键重开!", True, [0, 0, 0], [214, 231, 200])
-            textRectObj = textSurfaceObj.get_rect()
-            textRectObj.center = (relativeX, 225)
-            self.screen.blit(textSurfaceObj, textRectObj)
+
+            self.screen.blit(textSurfaceObj, (relativeX, 85))
         else:
             # 画分数面板
             # 写分数
+            textSurfaceObj = self.myFont.render(f"欢迎您玩俄罗斯方块", True, [0, 0, 0], [214, 231, 200])
+            self.screen.blit(textSurfaceObj, (relativeX, 10))
             textSurfaceObj = self.myFont.render(f"分数：{self.matrix.scores}", True, [0, 0, 0], [214, 231, 200])
-            textRectObj = textSurfaceObj.get_rect()
-            textRectObj.center = (relativeX, 25)
-            self.screen.blit(textSurfaceObj, textRectObj)
+            self.screen.blit(textSurfaceObj, (relativeX, 35))
 
             # 下一个方块
-            textSurfaceObj = self.myFont.render(f"下一个", True, [0, 0, 0], [214, 231, 200])
-            textRectObj = textSurfaceObj.get_rect()
-            textRectObj.center = (relativeX, 125)
-            self.screen.blit(textSurfaceObj, textRectObj)
+            textSurfaceObj = self.myFont.render(f"下一个方块", True, [0, 0, 0], [214, 231, 200])
+            self.screen.blit(textSurfaceObj, (relativeX, 60))
 
-            relativeY = 225
+            relativeY = 85
             # 画箱子
             for b in self.matrix.readyMino.block:
                 pygame.draw.rect(self.screen, self.matrix.readyMino.color,
-                                 [b[0] * 30 + 2 + relativeX-20,
+                                 [b[0] * 30 + 2 + relativeX+50,
                                   b[1] * 30 + 2 + relativeY, 25, 25], 0)
 
         # 空格暂停/开始
         textSurfaceObj = self.myFont.render(f"空格:{'开始'if not self.isStart else '暂停'}", True, [0, 0, 0], [214, 231, 200])
-        textRectObj = textSurfaceObj.get_rect()
-        textRectObj.center = (relativeX, 325)
-        self.screen.blit(textSurfaceObj, textRectObj)
+        self.screen.blit(textSurfaceObj, (relativeX, 180))
+        textSurfaceObj = self.myFont.render(f"↑    方块变形 ", True, [0, 0, 0],
+                                            [214, 231, 200])
+        self.screen.blit(textSurfaceObj, (relativeX, 205))
+        textSurfaceObj = self.myFont.render(f"↓    加速下落 ", True, [0, 0, 0],
+                                            [214, 231, 200])
+        self.screen.blit(textSurfaceObj, (relativeX, 230))
+        textSurfaceObj = self.myFont.render(f"→    向右移动 ", True, [0, 0, 0],
+                                            [214, 231, 200])
+        self.screen.blit(textSurfaceObj, (relativeX, 255))
+        textSurfaceObj = self.myFont.render(f"←    向左移动 ", True, [0, 0, 0],
+                                            [214, 231, 200])
+        self.screen.blit(textSurfaceObj, (relativeX, 280))
 
 if __name__ == '__main__':
     game = TetrisGame()
