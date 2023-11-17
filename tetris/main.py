@@ -27,7 +27,7 @@ class TetrisGame(BaseGame):
         self.myFont = pygame.font.Font('../resouces/ChillKai.ttf', 15)
         # 设置 自定义事件
         self.myEvent = pygame.USEREVENT + 1
-        pygame.time.set_timer(self.myEvent, 1000)  #
+        pygame.time.set_timer(self.myEvent, 100)  #
         clock = pygame.time.Clock()
 
     def eventListeners(self, event):
